@@ -21,6 +21,8 @@ boolean keyDown = false;
 float lTween = 3.49;
 float uTween = 3.15;
 
+PShape moonTexBump;
+
 void setup() {
   size(800, 600, P3D);
 
@@ -28,10 +30,11 @@ void setup() {
   bump=loadImage("bump.png");
   tex=loadImage("moon.png");
 
-  ptsW=450;
-  ptsH=450;
+  ptsW=650;
+  ptsH=650;
   // Parameters below are the number of vertices around the width and height
   initializeSphere(ptsW, ptsH);
+  createTextureBumpSphere(200, tex, bump, lTween, uTween);
 }
 
 
@@ -42,7 +45,7 @@ void keyReleased() {
   keyDown = false;
 }
 
-void mouseDragged(){
+void mouseDragged() {
   float xd = pmouseX - mouseX;
   float yd = pmouseY - mouseY;
   rotX += -xd/300.0;
@@ -65,10 +68,25 @@ void keyHandle() {
     if (key == 'd') rotX -= 0.01;
     if (key == 's') rotY -= 0.01;
 
-    if (key == '1') lTween -= 0.01;
-    if (key == '2') lTween += 0.01;
-    if (key == '3') uTween -= 0.01;
-    if (key == '4') uTween += 0.01;
+    boolean reShape = false;
+    if (key == '1') {
+      lTween -= 0.01;  
+      reShape = true;
+    }
+    if (key == '2') {
+      lTween += 0.01; 
+      reShape = true;
+    }
+    if (key == '3') {
+      uTween -= 0.01; 
+      reShape = true;
+    }
+    if (key == '4') {
+      uTween += 0.01; 
+      reShape = true;
+    }
+
+    if (reShape) createTextureBumpSphere(200, tex, bump, lTween, uTween);
     drawOp = constrain(drawOp, 1, 255);
   }
 }
@@ -91,7 +109,7 @@ void draw() {
   rotateX(rotY);
 
 
-  textureBumpSphere(200, tex, bump, lTween, uTween);
+  shape(moonTexBump);
   popMatrix();
 }
 
@@ -127,7 +145,10 @@ void initializeSphere(int numPtsW, int numPtsH_2pi) {
   }
 }
 
-void textureBumpSphere(float rx, PImage tex, PImage bump, float lowerTween, float upperTween) { 
+
+
+void createTextureBumpSphere(float rx, PImage tex, PImage bump, float lowerTween, float upperTween) { 
+  moonTexBump = createShape();
   // These are so we can map certain parts of the image on to the shape 
   float changeU=tex.width/(float)(numPointsW); //-1
   float changeV=tex.height/(float)(numPointsH); //-1
@@ -135,8 +156,8 @@ void textureBumpSphere(float rx, PImage tex, PImage bump, float lowerTween, floa
   float v=0;  // Height variable for the texture
 
 
-  beginShape(TRIANGLE_STRIP);
-  texture(tex);
+  moonTexBump.beginShape(TRIANGLE_STRIP);
+  moonTexBump.texture(tex);
   for (int i=0; i<(numPointsH-1); i++) {  // For all the rings but top and bottom
     // Goes into the array here instead of loop to save time
     float coory=coorY[i];
@@ -146,16 +167,16 @@ void textureBumpSphere(float rx, PImage tex, PImage bump, float lowerTween, floa
     float rad;
     for (int j=0; j<numPointsW; j++) { // For all the pts in the ring
       rad = rx *  map( brightness(bump.get((int)u, (int)v)), 0, 255, lowerTween, upperTween);
-      normal(-coorX[j]*multxz, -coory, -coorZ[j]*multxz);
-      vertex(coorX[j]*multxz*rad, coory*rad, coorZ[j]*multxz*rad, u, v);
+      moonTexBump.normal(-coorX[j]*multxz, -coory, -coorZ[j]*multxz);
+      moonTexBump.vertex(coorX[j]*multxz*rad, coory*rad, coorZ[j]*multxz*rad, u, v);
 
       rad = rx *  map( brightness(bump.get((int)u, (int)(v+1.0*changeV))), 0, 255, lowerTween, upperTween);
-      normal(-coorX[j]*multxzPlus, -cooryPlus, -coorZ[j]*multxzPlus);
-      vertex(coorX[j]*multxzPlus*rad, cooryPlus*rad, coorZ[j]*multxzPlus*rad, u, v+changeV);
+      moonTexBump.normal(-coorX[j]*multxzPlus, -cooryPlus, -coorZ[j]*multxzPlus);
+      moonTexBump.vertex(coorX[j]*multxzPlus*rad, cooryPlus*rad, coorZ[j]*multxzPlus*rad, u, v+changeV);
       u+=changeU;
     }
     v+=changeV;
     u=0;
   }
-  endShape();
+  moonTexBump.endShape();
 }
