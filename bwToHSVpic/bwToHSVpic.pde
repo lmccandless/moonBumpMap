@@ -27,15 +27,19 @@ work = createGraphics(bw.width,bw.height,P2D);
 }
 
 boolean f = false;
+
+float off = mouseX/float(width);
 void draw() {
+  //off = mouseX/float(width);
+  off = 0.365;
+  println(off);
   hsvToBW();
 
-  println("saved");
- // exit();
+ println("saved");
+  exit();
 }
 
 int rollOver(float k){
-   float off = 0.01;
   float g = k - off;
   if (g < 0.0) g += 1.0;
   return int(255*g);
@@ -43,7 +47,8 @@ int rollOver(float k){
 
 void hsvToBW() {
  // surface.setSize(bw.width, bw.height);
-  bw = bq;
+ // bw = bq;
+ bq = createImage(bw.width,bw.height,RGB);
   bw.loadPixels();
 
   for (int i = 0; i < bw.pixels.length; i++) {
@@ -54,14 +59,19 @@ void hsvToBW() {
     Color.RGBtoHSB((int)(255-red(hsv)), (int) (255-green(hsv)), (int)(255-blue(hsv)), hsba);
 
 
-    bw.pixels[i] = color(rollOver(hsba[0]));
+    bq.pixels[i] = color(rollOver(hsba[0]));
+    background(off*255);
   }
 
-  work.beginDraw();
-  work.image(bw,0,0);
-  work.endDraw();
- // work.save("bump.png");
-  image(work, 0, 0);
 
+
+  bq.loadPixels();
+  
+    work.beginDraw();
+  work.image(bq,0,0);
+  work.endDraw();
+  work.save("bump.png");
+    image(work, 0, 0);
+ // image(bq, 0, 0);
   // saveFrame("line-######.png");
 }
