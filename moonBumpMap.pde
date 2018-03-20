@@ -56,7 +56,7 @@ void hud() {
   camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
   fill(255);
   int y = -5, yS = 15;
-  text("lowerTween(1/2):"+ nf(lTween, 0, 2) + " upperTween(3/4):" + nf(uTween, 0, 2), 10, y+=yS);
+  text("lowerTween(1/2 keys):"+ nf(lTween, 0, 2) + " upperTween(3/4 keys):" + nf(uTween, 0, 2), 10, y+=yS);
   text("rotate wasd", 10, y+=yS);
   text("fps " + (int)frameRate, 10, y+=yS);
 }
