@@ -28,8 +28,8 @@ void setup() {
   bump=loadImage("bump.png");
   tex=loadImage("moon.png");
 
-  ptsW=350;
-  ptsH=350;
+  ptsW=450;
+  ptsH=450;
   // Parameters below are the number of vertices around the width and height
   initializeSphere(ptsW, ptsH);
 }
@@ -40,6 +40,13 @@ void keyPressed() {
 }
 void keyReleased() {
   keyDown = false;
+}
+
+void mouseDragged(){
+  float xd = pmouseX - mouseX;
+  float yd = pmouseY - mouseY;
+  rotX += -xd/300.0;
+  rotY += yd/300.0;
 }
 
 void hud() {
@@ -80,8 +87,8 @@ void draw() {
     0, 1, 0);
   pushMatrix();
   translate(width/2, height/2, 0); 
-  rotateX(rotX);
-  rotateZ(rotY);
+  rotateY(rotX);
+  rotateX(rotY);
 
 
   textureBumpSphere(200, tex, bump, lTween, uTween);
